@@ -12,16 +12,22 @@
 void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
 void printArray(int* array, int size);
-void sortWithBubbleSort(int* array, int size);
-
-#define SIZE 3361
+void bubbleSort(int* array, int left, int right);
 
 int main()
 {
-    int* tab = malloc(sizeof(int)*SIZE);
-    fillRandom(tab, SIZE);
+    int sizeArray, numberOfThread;
+    printf("Entrez la taille du tableau : ");
+    scanf("%d", &sizeArray);
+    printf("Entrez le nombre de threads : ");
+    scanf("%d", &numberOfThread);
 
-    free(tab);
+    int* array = malloc(sizeof(int)*sizeArray);
+    fillRandom(array, sizeArray);
+
+    //bubbleSort(array, 0, SIZE-1);
+
+    free(array);
     return 0;
 }
 
@@ -48,6 +54,7 @@ void printArray(int* array, int size)
     for(i = 0; i < size; i++) {
         printf("%d ", array[i]);
     }
+    printf("\n");
 }
 
 double getTime()
@@ -71,19 +78,18 @@ double getTime()
 	return now;
 }
 
-void sortWithBubbleSort(int* array, int size)
+void bubbleSort(int* array, int left, int right)
 {
     int i;
     //Bubble sorting algorithm
-    for(i=size-2; i >= 0; i--)
+    for(i=left; i <= right; i++)
     {
-        printf("le i est %d\n", i);
         int j;
-        for(j=0; j<=i; j++)
+        for(j=left; j < right-i; j++)
         {
             if(array[j] > array[j+1])
             {
-                swapValue(array, i, j);
+                swapValue(array, j, j+1);
             }
         }
     }
