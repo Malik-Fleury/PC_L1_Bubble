@@ -9,9 +9,9 @@
 #include <sys/time.h>
 #include <pthread.h>
 
-void swapArray(int* array, int a, int b);
+void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
-void printTab(int* array, int size, int sign, int mark);
+void printArray(int* array, int size);
 void sortWithBubbleSort(int* array, int size);
 
 #define SIZE 3361
@@ -25,7 +25,7 @@ int main()
     return 0;
 }
 
-void swapArray(int* array, int a, int b)
+void swapValue(int* array, int a, int b)
 {
 	int tmp = array[a];
 	array[a] = array[b];
@@ -35,13 +35,18 @@ void swapArray(int* array, int a, int b)
 void fillRandom(int* array, int size)
 {
 	srand(time(0)*getpid());
-	for (int i=0; i<size; i++) {
-		array[i] = rand()%(size*3);
+	for (int i=0; i<size; i++)
+    {
+        array[i] = rand()%(size*3);
 	}
 }
 
-void print_tab(int* array, int size, int sign, int mark)
+void printArray(int* array, int size)
 {
+    int i;
+    for(i = 0; i < size, i++) {
+        printf("%d ", array[i]);
+    }
 }
 
 double getTime()
@@ -52,9 +57,13 @@ double getTime()
 
 	gettimeofday(&tv, 0);
 	now = tv.tv_sec + tv.tv_usec / 1e6L;
-	if (start) {
+
+	if (start)
+    {
 		now -= start;
-	} else {
+	}
+	else
+	{
 		start = now;
 		now = 0.L;
 	}
@@ -63,18 +72,17 @@ double getTime()
 
 void sortWithBubbleSort(int* array, int size)
 {
-    int i, j, temp;
+    int i;
     //Bubble sorting algorithm
     for(i=size-2; i >= 0; i--)
     {
-        printf("le i est %d\n", i) ;
+        printf("le i est %d\n", i);
+        int j;
         for(j=0; j<=i; j++)
         {
-            //Swap
             if(array[j] > array[j+1])
             {
-                temp = array[j];
-                array[j] = array[j+1]; array[j+1]= temp;
+                swapArray(array, i, j);
             }
         }
     }
