@@ -35,7 +35,8 @@ void swapValue(int* array, int a, int b)
 void fillRandom(int* array, int size)
 {
 	srand(time(0)*getpid());
-	for (int i=0; i<size; i++)
+	int i;
+	for (i=0; i < size; i++)
     {
         array[i] = rand()%(size*3);
 	}
@@ -44,7 +45,7 @@ void fillRandom(int* array, int size)
 void printArray(int* array, int size)
 {
     int i;
-    for(i = 0; i < size, i++) {
+    for(i = 0; i < size; i++) {
         printf("%d ", array[i]);
     }
 }
@@ -82,7 +83,7 @@ void sortWithBubbleSort(int* array, int size)
         {
             if(array[j] > array[j+1])
             {
-                swapArray(array, i, j);
+                swapValue(array, i, j);
             }
         }
     }
