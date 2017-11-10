@@ -10,20 +10,11 @@
 #include <pthread.h>
 #include "section.h"
 
-void prototypeThreadedSort(int threadsCount, int array[], int sizeArray);
-void* worker(void* param);
-void threadSafeBubbleSort(Section* section);
-
-struct structSubArrToSort {
-   int* array;
-   int  size;
-};
-typedef struct structSubArrToSort subArrToSort;
-
 void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
 void printArray(int* array, int size);
-void bubbleSort(int* array, int left, int right);
+void bubbleSort(int* array, int size);
+void* multiThreadBubbleSort(void* param);
 
 /*
     TODO : RECHANGER bubbleSort en tab + size avec arithmétique des pointeurs, plus simple pour passer au thread
@@ -40,14 +31,15 @@ int main()
 
     //calculate the size of the subarray for each thread
     int sizesArrays[numberOfThread];
-    int modSize = sizeArray % numberOfThread;
+    int sizeSubArray = (sizeArray + numberOfThread - 1) / numberOfThread;
+    int modSize = sizeArray+numberOfThread-1 % numberOfThread;
     int i;
-    for(i = 0; i <= numberOfThread; i++)
+    for(i = 0; i < numberOfThread; i++)
     {
-        sizeArray[i] = sizeArray / numberOfThread;
+        sizesArrays[i] = sizeSubArray;
         if(modSize > 0)
         {
-            sizeArray[i]++;
+            sizesArrays[i]++;
             modSize--;
         }
     }
@@ -57,17 +49,30 @@ int main()
     fillRandom(arrData, sizeArray);
 
     pthread_t* arrThreads = malloc(sizeof(pthread_t)*numberOfThread);
+    int numberOfMutex = numberOfThread-1;
+    pthread_mutex_t* arrMutexes = malloc(sizeof(pthread_mutex_t)*numberOfMutex);
 
     int* subArray = arrData;
 
-    int i;
     for(i = 0; i < numberOfThread; i++)
     {
-        subArrToSort data;
-        data.array = subArray;
-        data.size = sizesArrays[i];
-
+        Section* data;
+        initSection(data, subArray, sizesArrays[i], arrThreads[i]);
         pthread_create(&arrThreads, NULL, bubbleSort, &data);
+        pthread_mutex_t* leftMutex = NULL;
+        pthread_mutex_t* rightMutex = NULL;
+
+        if(i > 0)
+        {
+            leftMutex = arrMutexes[i-1];
+        }
+        if(i < numberOfThread - 1)
+        {
+            rightMutex = arrMutexes[i];
+        }
+
+        initSection(data, subArray, sizesArrays[i], leftMutex, rightMutex);
+
         subArray += sizesArrays[i];
     }
 
@@ -166,16 +171,37 @@ double getTime()
 
 void* multiThreadBubbleSort(void* param)
 {
+    Section* section = (Section*)param;
+
     int i;
     //Bubble sorting algorithm
-    for(i = 0; i <= size; i++)
+    //changer en while
+    for(i = 0; i < section->size; i++)
     {
         int j;
-        for(j=0; j < size-i; j++)
+        for(j = 0; j < section->size; j++)
         {
-            if(array[j] > array[j+1])
+            if(section->array[j] > section->array[j+1])
             {
-                swapValue(array, j, j+1);
+                if(i == 0 && section->leftMutex != NULL)
+                {
+                    pthread_mutex_lock(section->leftMutex);
+                }
+                else if(i == section->size-1 && section->rightMutex != NULL)
+                {
+                    pthread_mutex_lock(section->rightMutex);
+                }
+
+                swapValue(section->array, j, j+1);
+
+                if(i == 0 && section->leftMutex != NULL)
+                {
+                    pthread_mutex_unlock(section->leftMutex);
+                }
+                else if(i == section->size-1 && section->rightMutex != NULL)
+                {
+                    pthread_mutex_unlock(section->rightMutex);
+                }
             }
         }
     }

@@ -1,7 +1,14 @@
 # depslib dependency file v1.0
-1509714942 source:d:\prog_concurente\laboratoire\labo1\pc_l1_bubble\main.c
+1510317962 source:d:\prog_concurente\laboratoire\labo1\pc_l1_bubble\main.c
 	<stdio.h>
 	<stdlib.h>
 	<sys/time.h>
 	<pthread.h>
+	"section.h"
+
+1510314616 d:\prog_concurente\laboratoire\labo1\pc_l1_bubble\section.h
+	<pthread.h>
+
+1510316285 source:d:\prog_concurente\laboratoire\labo1\pc_l1_bubble\section.c
+	"section.h"
 
