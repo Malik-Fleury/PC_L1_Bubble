@@ -8,6 +8,11 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include "section.h"
+
+void prototypeThreadedSort(int threadsCount, int array[], int sizeArray);
+void* worker(void* param);
+void threadSafeBubbleSort(Section* section);
 
 void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
@@ -26,9 +31,99 @@ int main()
     fillRandom(array, sizeArray);
 
     //bubbleSort(array, 0, SIZE-1);
+    printArray(array,sizeArray);
+    prototypeThreadedSort(numberOfThread, array, sizeArray);
+    printArray(array,sizeArray);
 
     free(array);
     return 0;
+}
+
+void prototypeThreadedSort(int threadsCount, int array[], int sizeArray)
+{
+    int mutexCount = threadsCount-1;
+    pthread_t thread[threadsCount];
+    pthread_mutex_t mutex[mutexCount];
+    Section section[threadsCount];
+
+    int sizeSection = sizeArray / threadsCount;
+    int rest = sizeArray % threadsCount;
+
+    int cnt;
+    int leftIndex = 0;
+    int rightIndex = sizeSection;
+
+    initSection(section, array, leftIndex, rightIndex,
+                thread, NULL, mutex);
+    for(cnt = 1;cnt < (threadsCount-1); cnt++)
+    {
+        leftIndex = rightIndex + 2;
+        rightIndex = leftIndex + (sizeSection);
+        initSection(section+cnt, array, leftIndex, rightIndex,
+                    thread+cnt, mutex+(cnt-1), mutex+cnt);
+    }
+    initSection(section+threadsCount-1, array, rightIndex+1-1, sizeArray-1,
+                thread+(threadsCount-1),mutex+(mutexCount-1), NULL);
+
+    int sectionCount = threadsCount;
+    for(cnt = 0;cnt < sectionCount; cnt++)
+    {
+        pthread_create(section[cnt].thread, NULL, worker, section+cnt);
+        printSection(section+cnt);
+    }
+
+    for(cnt = 0;cnt < sectionCount; cnt++)
+    {
+        pthread_join(*(section[cnt].thread), NULL);
+        printf("Thread %d has joined\n",(cnt+1));
+    }
+}
+
+void* worker(void* param)
+{
+    Section* section = (Section*)param;
+
+    threadSafeBubbleSort(section);
+
+    return NULL;
+}
+
+void threadSafeBubbleSort(Section* section)
+{
+    int* array = section->array;
+    int left = section->leftIndex;
+    int right = section->rightIndex;
+    int i;
+    //Bubble sorting algorithm
+    for(i=left; i <= right; i++)
+    {
+        int j;
+        for(j=left; j < right-i; j++)
+        {
+            if(array[j] > array[j+1])
+            {
+                if(j == left && section->leftMutex != NULL)
+                {
+                    pthread_mutex_lock(section->leftMutex);
+                    printf("Protected swap ! LEFT j=%d\n",j);
+                    swapValue(array, j, j+1);
+                    pthread_mutex_unlock(section->leftMutex);
+                }
+                else if(j+1 == right && section->rightMutex != NULL)
+                {
+                    pthread_mutex_lock(section->rightMutex);
+                    printf("Protected swap ! RIGHT j=%d\n",j+1);
+                    swapValue(array, j, j+1);
+                    pthread_mutex_unlock(section->rightMutex);
+                }
+                else
+                {
+                    printf("Protected swap ! j=%d\n",j);
+                    swapValue(array, j, j+1);
+                }
+            }
+        }
+    }
 }
 
 void swapValue(int* array, int a, int b)
