@@ -5,3 +5,10 @@
 	<sys/time.h>
 	<pthread.h>
 
+1510314636 source:d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\section.c
+	"section.h"
+
+1510319679 d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\section.h
+	<pthread.h>
+	<stdbool.h>
+

@@ -2,6 +2,7 @@
 #define SECTION_H_INCLUDED
 
 #include <pthread.h>
+#include <stdbool.h>
 
 struct Section_t
 {
