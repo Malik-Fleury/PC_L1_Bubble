@@ -9,10 +9,21 @@
 #include <sys/time.h>
 #include <pthread.h>
 
+struct structSubArrToSort {
+   int* array;
+   int  size;
+};
+typedef struct structSubArrToSort subArrToSort;
+
 void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
 void printArray(int* array, int size);
 void bubbleSort(int* array, int left, int right);
+
+/*
+    TODO : RECHANGER bubbleSort en tab + size avec arithmétique des pointeurs, plus simple pour passer au thread
+    TODO : Optimisation de la taille des threads
+*/
 
 int main()
 {
@@ -22,12 +33,42 @@ int main()
     printf("Entrez le nombre de threads : ");
     scanf("%d", &numberOfThread);
 
-    int* array = malloc(sizeof(int)*sizeArray);
-    fillRandom(array, sizeArray);
+    //calculate the size of the subarray for each thread
+    int sizesArrays[numberOfThread];
+    int modSize = sizeArray % numberOfThread;
+    int i;
+    for(i = 0; i <= numberOfThread; i++)
+    {
+        sizeArray[i] = sizeArray / numberOfThread;
+        if(modSize > 0)
+        {
+            sizeArray[i]++;
+            modSize--;
+        }
+    }
 
-    //bubbleSort(array, 0, SIZE-1);
+    //creation du tableau de données, malloc pour pouvoir faire un grand tableau
+    int* arrData = malloc(sizeof(int)*sizeArray);
+    fillRandom(arrData, sizeArray);
 
-    free(array);
+    pthread_t* arrThreads = malloc(sizeof(pthread_t)*numberOfThread);
+
+    int* subArray = arrData;
+
+    int i;
+    for(i = 0; i < numberOfThread; i++)
+    {
+        subArrToSort data;
+        data.array = subArray;
+        data.size = sizesArrays[i];
+
+        pthread_create(&arrThreads, NULL, bubbleSort, &data);
+        subArray += sizesArrays[i];
+    }
+
+    //free memory
+    free(arrData);
+    free(arrThreads);
     return 0;
 }
 
@@ -78,14 +119,14 @@ double getTime()
 	return now;
 }
 
-void bubbleSort(int* array, int left, int right)
+void bubbleSort(int* array, int size)
 {
     int i;
     //Bubble sorting algorithm
-    for(i=left; i <= right; i++)
+    for(i = 0; i <= size; i++)
     {
         int j;
-        for(j=left; j < right-i; j++)
+        for(j=0; j < size-i; j++)
         {
             if(array[j] > array[j+1])
             {
