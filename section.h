@@ -8,7 +8,6 @@ struct Section_t
 {
     int* array;
     int size;
-    pthread_t* thread;
     pthread_mutex_t* leftMutex;
     pthread_mutex_t* rightMutex;
 };
