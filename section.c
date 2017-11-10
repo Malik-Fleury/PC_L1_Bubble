@@ -11,13 +11,11 @@
 
 #include "section.h"
 
-void initSection(Section* section, int* array, int leftIndex, int rightIndex, pthread_t* thread,
+void initSection(Section* section, int* array, int size,
                  pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex)
 {
     section->array = array;
-    section->leftIndex = leftIndex;
-    section->rightIndex = rightIndex;
-    section->thread = thread;
+    section->size = size;
     section->leftMutex = leftMutex;
     section->rightMutex = rightMutex;
 }
@@ -26,9 +24,7 @@ void printSection(Section* section)
 {
     printf("-------------------------------------------\n");
     printf("Adresse du tableau : %p\n",section->array);
-    printf("Index gauche : %d\n",section->leftIndex);
-    printf("Index droit : %d\n",section->rightIndex);
-    printf("Adresse du thread : %p\n",section->thread);
+    printf("Size : %d\n",section->size);
     printf("Adresse du mutex gauche : %p\n",section->leftMutex);
     printf("Adresse du mutex droit : %p\n",section->rightMutex);
 }
