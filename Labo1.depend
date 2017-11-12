@@ -12,10 +12,17 @@
 1510316285 source:d:\prog_concurente\laboratoire\labo1\pc_l1_bubble\section.c
 	"section.h"
 
-1510314636 source:d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\section.c
+1510320067 source:d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\section.c
 	"section.h"
 
-1510319679 d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\section.h
+1510319965 d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\section.h
 	<pthread.h>
 	<stdbool.h>
+
+1510319784 source:d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_l1_bubble\main.c
+	<stdio.h>
+	<stdlib.h>
+	<sys/time.h>
+	<pthread.h>
+	"section.h"
 

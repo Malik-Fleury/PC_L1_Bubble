@@ -11,13 +11,16 @@
 
 #include "section.h"
 
-void initSection(Section* section, int* array, int size,
-                 pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex)
+void initSection(Section* section, int tId, int* array, int size,
+                 pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex, bool* end, bool* arrayWorking)
 {
+    section->tId = tId;
     section->array = array;
     section->size = size;
     section->leftMutex = leftMutex;
     section->rightMutex = rightMutex;
+    section->end = end;
+    section->arrayWorking = arrayWorking;
 }
 
 void printSection(Section* section)
