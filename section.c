@@ -12,7 +12,9 @@
 #include "section.h"
 
 void initSection(Section* section, int tId, int* array, int size,
-                 pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex, bool* end, bool* arrayWorking)
+                 pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex,
+                 char* end, pthread_mutex_t* mutexEnd,
+                 char* arrayWorking, int sizeArrayWorking, pthread_mutex_t* arrayMutexWorking)
 {
     section->tId = tId;
     section->array = array;
@@ -20,7 +22,10 @@ void initSection(Section* section, int tId, int* array, int size,
     section->leftMutex = leftMutex;
     section->rightMutex = rightMutex;
     section->end = end;
+    section->mutexEnd = mutexEnd;
     section->arrayWorking = arrayWorking;
+    section->sizeArrayWorking = sizeArrayWorking;
+    section->arrayMutexWorking = arrayMutexWorking;
 }
 
 void printSection(Section* section)

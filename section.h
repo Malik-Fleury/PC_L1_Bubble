@@ -11,8 +11,14 @@ struct Section_t
     int size;
     pthread_mutex_t* leftMutex;
     pthread_mutex_t* rightMutex;
-    bool* end;
-    bool* arrayWorking;
+    //bool mais pas possible alors char, plus petite variable en espace mémoire
+    //si tous les tableaux sont triés
+    char* end;
+    pthread_mutex_t* mutexEnd;
+    //listes des tableaux qui si en trains de triés
+    char* arrayWorking;
+    int sizeArrayWorking;
+    pthread_mutex_t* arrayMutexWorking;
 };
 
 typedef struct Section_t Section;
