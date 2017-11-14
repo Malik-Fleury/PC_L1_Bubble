@@ -19,11 +19,11 @@ char checkIsLastWorking(char* arrWorking, int sizeArrayWorking);
 
 int main()
 {
-    int sizeArray, numberOfThread;
+    int sizeData, numberOfThread;
     printf("Entrez la taille du tableau : ");
-    scanf("%d", &sizeArray);
+    scanf("%d", &sizeData);
 
-    while(numberOfThread > sizeArray)
+    while(numberOfThread > sizeData)
     {
         printf("Entrez le nombre de threads : ");
         scanf("%d", &numberOfThread);
@@ -31,8 +31,8 @@ int main()
 
     //calculer la taille des sous-tableaux
     int sizesArrays[numberOfThread];
-    int sizeSubArray = (sizeArray + numberOfThread - 1) / numberOfThread;
-    int modSize = sizeArray+numberOfThread-1 % numberOfThread;
+    int sizeSubArray = (sizeData + numberOfThread - 1) / numberOfThread;
+    int modSize = sizeData+numberOfThread-1 % numberOfThread;
 
     //initiation des tableaux
     char end = 0;
@@ -64,8 +64,8 @@ int main()
     }
 
     //creation du tableau de données, malloc pour pouvoir faire un grand tableau (plus grand que demandé dans le labo)
-    int* arrData = malloc(sizeof(int)*sizeArray);
-    fillRandom(arrData, sizeArray);
+    int* arrData = malloc(sizeof(int)*sizeData);
+    fillRandom(arrData, sizeData);
     int* subArray = arrData;
 
     for(i = 0; i < numberOfThread; i++)
@@ -83,15 +83,11 @@ int main()
             rightMutex = &arrMutexes[i];
         }
 
-                //création de la structure
-        Section* data;
+        //création de la structure
+        Section* data = malloc(sizeof(Section));
         initSection(data, i, subArray, sizesArrays[i], leftMutex, rightMutex, &end, &mutexEnd, working, numberOfThread);
 
-        if (pthread_create(&arrThreads[i],NULL,bubbleSort, data) == 0)
-        {
-            pthread_join(arrThreads[i], NULL);
-        }
-        else
+        if (pthread_create(&arrThreads[i], NULL, multiThreadBubbleSort, data) != 0)
         {
             exit(-1);
         }
@@ -100,6 +96,13 @@ int main()
         subArray += sizesArrays[i];
     }
 
+    for(i = 0; i < numberOfThread; i++)
+    {
+        pthread_join(arrThreads[i], NULL);
+    }
+
+    printArray(arrData, sizeData);
+
     //free memory
     free(arrData);
     free(arrThreads);
@@ -107,6 +110,14 @@ int main()
     free(arrMutexes);
 
     return 0;
+}
+
+void printArray(int* array, int sizeArray) {
+    int i;
+    for(i = 0; i < sizeArray; i++)
+    {
+        printf("%d ", array[i]);
+    }
 }
 
 void swapValue(int* array, int a, int b)
@@ -124,15 +135,6 @@ void fillRandom(int* array, int size)
     {
         array[i] = rand()%(size*3);
 	}
-}
-
-void printArray(int* array, int size)
-{
-    int i;
-    for(i = 0; i < size; i++) {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
 }
 
 double getTime()
@@ -206,7 +208,6 @@ void* multiThreadBubbleSort(void* param)
                 pthread_mutex_lock(section->mutexEnd);
                 *(section->end) = 1;
                 pthread_mutex_unlock(section->mutexEnd);
-                return;
             }
             else
             {
@@ -220,9 +221,10 @@ void* multiThreadBubbleSort(void* param)
                 }
             }
         }
-
         while(section->arrayWorking[section->tId] == 0 && section->end == 0){}
     }
+
+    free(section);
 }
 
 char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
