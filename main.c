@@ -70,7 +70,7 @@ int main()
     fillRandom(arrData, sizeData);
     int* subArray = arrData;
 
-    printArray(arrData, sizeData);
+    //printArray(arrData, sizeData);
 
     for(i = 0; i < numberOfThread; i++)
     {
@@ -105,7 +105,7 @@ int main()
         pthread_join(arrThreads[i], NULL);
     }
 
-    printArray(arrData, sizeData);
+    //printArray(arrData, sizeData);
 
     //free memory
     free(arrData);
@@ -164,10 +164,11 @@ double getTime()
 	return now;
 }
 
+pthread_mutex_t modifyWorking = PTHREAD_MUTEX_INITIALIZER;
+
 void* multiThreadBubbleSort(void* param)
 {
     Section* section = (Section*)param;
-
 
     //Bubble sorting algorithm
     //changer en while
@@ -207,12 +208,15 @@ void* multiThreadBubbleSort(void* param)
 
         if(section->tId == 1)
         {
-            printArray(section->array, section->size);
+            //printArray(section->array, section->size);
         }
 
         if(hasSwapped == 0)
         {
+            // MUTEX - MF
+            pthread_mutex_lock(&modifyWorking);
             section->arrayWorking[section->tId] = 0;
+            pthread_mutex_unlock(&modifyWorking);
 
             //SI c'est le dernier qui travaille on s'arrête
             if(checkIsLastWorking(section->arrayWorking, section->sizeArrayWorking) == 1)
@@ -223,6 +227,8 @@ void* multiThreadBubbleSort(void* param)
             }
             else
             {
+                // MUTEX - MF
+                pthread_mutex_lock(&modifyWorking);
                 if(section->tId > 0)
                 {
                     section->arrayWorking[section->tId - 1] = 1;
@@ -231,6 +237,7 @@ void* multiThreadBubbleSort(void* param)
                 {
                     section->arrayWorking[section->tId + 1] = 1;
                 }
+                pthread_mutex_unlock(&modifyWorking);
             }
             while(section->arrayWorking[section->tId] == 0 && section->end == 0){}
         }
@@ -239,10 +246,15 @@ void* multiThreadBubbleSort(void* param)
     free(section);
 }
 
+pthread_mutex_t checkWorking = PTHREAD_MUTEX_INITIALIZER;
+
 char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
 {
     char isSomeoneWorking = 0;
     int i;
+
+    // MUTEX - MF
+    pthread_mutex_lock(&checkWorking);
     for(i = 0; i < sizeArrayWorking; i++)
     {
         if(arrWorking[i] == 1)
@@ -250,6 +262,7 @@ char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
             isSomeoneWorking = 1;
         }
     }
+    pthread_mutex_unlock(&checkWorking);
 
     if(isSomeoneWorking != 0)
     {
