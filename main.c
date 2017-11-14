@@ -101,7 +101,7 @@ int main()
         pthread_join(arrThreads[i], NULL);
     }
 
-    printArray(arrData, sizeData);
+    //printArray(arrData, sizeData);
 
     //free memory
     free(arrData);
@@ -162,12 +162,19 @@ void* multiThreadBubbleSort(void* param)
 {
     Section* section = (Section*)param;
 
+    if(section->tId == 0)
+    {
+        printArray(section->array, section->size);
+        printf("\nend : %d", *(section->end));
+    }
+
     int i;
     //Bubble sorting algorithm
     //changer en while
-    while(section->end == 0)
+    while(*(section->end) == 0)
     {
         char hasSwapped = 0;
+
         int j;
         for(j = 0; j < section->size; j++)
         {
@@ -188,7 +195,7 @@ void* multiThreadBubbleSort(void* param)
             }
 
             //unlock des mutex si c'est une valeur partagée
-            if(i ==0 && section->leftMutex != NULL)
+            if(i == 0 && section->leftMutex != NULL)
             {
                 pthread_mutex_unlock(section->leftMutex);
             }
@@ -203,7 +210,7 @@ void* multiThreadBubbleSort(void* param)
             section->arrayWorking[section->tId] = 0;
 
             //SI c'est le dernier qui travaille on s'arrête
-            if(checkIsLastWorking(section->arrayWorking, section->sizeArrayWorking) == 0)
+            if(checkIsLastWorking(section->arrayWorking, section->sizeArrayWorking) == 1)
             {
                 pthread_mutex_lock(section->mutexEnd);
                 *(section->end) = 1;
@@ -220,8 +227,8 @@ void* multiThreadBubbleSort(void* param)
                     section->arrayWorking[section->tId + 1] = 1;
                 }
             }
+            while(section->arrayWorking[section->tId] == 0 && section->end == 0){}
         }
-        while(section->arrayWorking[section->tId] == 0 && section->end == 0){}
     }
 
     free(section);
