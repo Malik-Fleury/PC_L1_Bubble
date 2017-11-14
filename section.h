@@ -18,7 +18,6 @@ struct Section_t
     //listes des tableaux qui si en trains de triés
     char* arrayWorking;
     int sizeArrayWorking;
-    pthread_mutex_t* arrayMutexWorking;
 };
 
 typedef struct Section_t Section;

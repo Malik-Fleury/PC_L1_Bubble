@@ -15,7 +15,7 @@ void fillRandom(int* array, int size);
 void printArray(int* array, int size);
 void bubbleSort(int* array, int size);
 void* multiThreadBubbleSort(void* param);
-void checkIsLastWorking(char* arrWorking, pthread_mutex_t* arrMutexWorking, int sizeArrayWorking);
+char checkIsLastWorking(char* arrWorking, int sizeArrayWorking);
 
 int main()
 {
@@ -38,12 +38,11 @@ int main()
     char end = 0;
     pthread_mutex_t mutexEnd = PTHREAD_MUTEX_INITIALIZER;
     char* working = malloc(sizeof(char)*numberOfThread);
-    pthread_mutex_t* mutexWorking = malloc(sizeof(char)*numberOfThread);
-
-    pthread_t* arrThreads = malloc(sizeof(pthread_t)*numberOfThread);
 
     int numberOfMutex = numberOfThread - 1;
     pthread_mutex_t* arrMutexes = malloc(sizeof(pthread_mutex_t)*numberOfMutex);
+
+    pthread_t* arrThreads = malloc(sizeof(pthread_t)*numberOfThread);
 
     int i;
     for(i = 0; i < numberOfMutex; i++)
@@ -54,7 +53,6 @@ int main()
     for(i = 0; i < numberOfThread; i++)
     {
         working[i] = 1;
-        mutexWorking[i] = PTHREAD_MUTEX_INITIALIZER;
 
         sizesArrays[i] = sizeSubArray;
 
@@ -87,7 +85,7 @@ int main()
 
                 //création de la structure
         Section* data;
-        initSection(data, i, subArray, sizesArrays[i], leftMutex, rightMutex, &end, &mutexEnd, working, numberOfThread, mutexWorking);
+        initSection(data, i, subArray, sizesArrays[i], leftMutex, rightMutex, &end, &mutexEnd, working, numberOfThread);
 
         if (pthread_create(&arrThreads[i],NULL,bubbleSort, data) == 0)
         {
@@ -105,7 +103,6 @@ int main()
     //free memory
     free(arrData);
     free(arrThreads);
-    free(mutexWorking);
     free(working);
     free(arrMutexes);
 
@@ -201,19 +198,53 @@ void* multiThreadBubbleSort(void* param)
 
         if(hasSwapped == 0)
         {
-            pthread_mutex_lock(section->arrayMutexWorking);
             section->arrayWorking[section->tId] = 0;
-            pthread_mutex_unlock(section->arrayMutexWorking);
 
-            checkIsLastWorking(section->arrayWorking, section->arrayMutexWorking, section->sizeArrayWorking);
-
+            //SI c'est le dernier qui travaille on s'arrête
+            if(checkIsLastWorking(section->arrayWorking, section->sizeArrayWorking) == 0)
+            {
+                pthread_mutex_lock(section->mutexEnd);
+                *(section->end) = 1;
+                pthread_mutex_unlock(section->mutexEnd);
+                return;
+            }
+            else
+            {
+                if(section->tId > 0)
+                {
+                    section->arrayWorking[section->tId - 1] = 1;
+                }
+                if(section->tId < section->sizeArrayWorking - 1)
+                {
+                    section->arrayWorking[section->tId + 1] = 1;
+                }
+            }
         }
+
+        while(section->arrayWorking[section->tId] == 0 && section->end == 0){}
     }
 }
 
-void checkIsLastWorking(char* arrWorking, pthread_mutex_t* arrMutexWorking, int sizeArrayWorking)
+char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
 {
+    char isSomeoneWorking = 0;
+    int i;
+    for(i = 0; i < sizeArrayWorking; i++)
+    {
+        if(arrWorking[i] == 1)
+        {
+            isSomeoneWorking = 1;
+        }
+    }
 
+    if(isSomeoneWorking != 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 void bubbleSort(int* array, int size)

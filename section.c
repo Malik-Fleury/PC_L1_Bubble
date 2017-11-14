@@ -14,7 +14,7 @@
 void initSection(Section* section, int tId, int* array, int size,
                  pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex,
                  char* end, pthread_mutex_t* mutexEnd,
-                 char* arrayWorking, int sizeArrayWorking, pthread_mutex_t* arrayMutexWorking)
+                 char* arrayWorking, int sizeArrayWorking)
 {
     section->tId = tId;
     section->array = array;
@@ -25,7 +25,6 @@ void initSection(Section* section, int tId, int* array, int size,
     section->mutexEnd = mutexEnd;
     section->arrayWorking = arrayWorking;
     section->sizeArrayWorking = sizeArrayWorking;
-    section->arrayMutexWorking = arrayMutexWorking;
 }
 
 void printSection(Section* section)
