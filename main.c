@@ -65,14 +65,12 @@ int main()
         }
     }
 
-    //printf("\n1:%d", sizesArrays[0]);
-    //printf("\n2:%d", sizesArrays[1]);
-    printArray(sizesArrays, numberOfThread);
-
     //creation du tableau de données, malloc pour pouvoir faire un grand tableau (plus grand que demandé dans le labo)
     int* arrData = malloc(sizeof(int)*sizeData);
     fillRandom(arrData, sizeData);
     int* subArray = arrData;
+
+    printArray(arrData, sizeData);
 
     for(i = 0; i < numberOfThread; i++)
     {
@@ -107,7 +105,7 @@ int main()
         pthread_join(arrThreads[i], NULL);
     }
 
-    //printArray(arrData, sizeData);
+    printArray(arrData, sizeData);
 
     //free memory
     free(arrData);
@@ -119,6 +117,8 @@ int main()
 }
 
 void printArray(int* array, int sizeArray) {
+    printf("\n");
+
     int i;
     for(i = 0; i < sizeArray; i++)
     {
@@ -168,6 +168,7 @@ void* multiThreadBubbleSort(void* param)
 {
     Section* section = (Section*)param;
 
+
     //Bubble sorting algorithm
     //changer en while
     while(*(section->end) == 0)
@@ -187,16 +188,10 @@ void* multiThreadBubbleSort(void* param)
                 pthread_mutex_lock(section->rightMutex);
             }
 
-            if(section->array[j] > section->array[j+1])
+            if(j < section->size - 1 && section->array[j] > section->array[j+1])
             {
                 swapValue(section->array, j, j+1);
                 hasSwapped = 1;
-
-                if(section->tId == 0)
-                {
-                    printf("taille : %d\n");
-                    printArray(section->array, section->size);
-                }
             }
 
             //unlock des mutex si c'est une valeur partagée
@@ -208,6 +203,11 @@ void* multiThreadBubbleSort(void* param)
             {
                 pthread_mutex_unlock(section->rightMutex);
             }
+        }
+
+        if(section->tId == 1)
+        {
+            printArray(section->array, section->size);
         }
 
         if(hasSwapped == 0)
