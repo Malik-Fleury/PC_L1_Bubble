@@ -29,9 +29,14 @@ void initSection(Section* section, int tId, int* array, int size,
 
 void printSection(Section* section)
 {
-    printf("-------------------------------------------\n");
+    printf("-------------------------------------------------------------DEBUG\n");
+    printf("ID du thread : %d", section->tId);
     printf("Adresse du tableau : %p\n",section->array);
-    printf("Size : %d\n",section->size);
+    printf("Taille du tableau : %d\n",section->size);
     printf("Adresse du mutex gauche : %p\n",section->leftMutex);
     printf("Adresse du mutex droit : %p\n",section->rightMutex);
+    printf("Adresse du flag de fin de tri : %p", section->end);
+    printf("Adresse du mutex de fin de tri : %p", section->mutexEnd);
+    printf("Adresse du tableau de flags de tri : %p", section->arrayWorking);
+    printf("Taille du tableau de flags : %d", section->sizeArrayWorking);
 }
