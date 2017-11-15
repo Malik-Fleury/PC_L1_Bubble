@@ -108,7 +108,7 @@ int main()
     clock_t clockEnd = clock();
     double timeMultiThread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
 
-    printf("\ntemps ecoule en multithread : %f seconds", timeMultiThread);
+    printf("\ntemps ecoule en multithread : %f secondes", timeMultiThread);
 
     fillRandom(arrData, sizeData);
 
@@ -120,7 +120,7 @@ int main()
 
     double timeMonothread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
 
-    printf("\ntemps ecoule en monothread : %f seconds", timeMonothread);
+    printf("\ntemps ecoule en monothread : %f secondes", timeMonothread);
 
     //free memory
     free(arrData);
@@ -200,11 +200,6 @@ void* multiThreadBubbleSort(void* param)
             }
         }
 
-        if(section->tId == 1)
-        {
-            //printArray(section->array, section->size);
-        }
-
         if(hasSwapped == 0)
         {
             // MUTEX - MF
@@ -258,6 +253,7 @@ char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
     }
     pthread_mutex_unlock(&checkWorking);
 
+    /*
     if(isSomeoneWorking != 0)
     {
         return 0;
@@ -266,6 +262,8 @@ char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
     {
         return 1;
     }
+    */
+    return isSomeoneWorking == 0;
 }
 
 void bubbleSort(int* array, int size)
