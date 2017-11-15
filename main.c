@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include <time.h>
 #include <pthread.h>
 #include "section.h"
 
@@ -30,6 +30,13 @@ int main()
     } while(numberOfThread > sizeData);
 
     printf("Taille du tableau : %d nombre de thread : %d\n", sizeData, numberOfThread);
+
+    //creation du tableau de données, malloc pour pouvoir faire un grand tableau (plus grand que demandé dans le labo)
+    int* arrData = malloc(sizeof(int)*sizeData);
+    fillRandom(arrData, sizeData);
+    int* subArray = arrData;
+
+    clock_t clockStart = clock();
 
     //calculer la taille des sous-tableaux
     int sizesArrays[numberOfThread];
@@ -65,13 +72,6 @@ int main()
         }
     }
 
-    //creation du tableau de données, malloc pour pouvoir faire un grand tableau (plus grand que demandé dans le labo)
-    int* arrData = malloc(sizeof(int)*sizeData);
-    fillRandom(arrData, sizeData);
-    int* subArray = arrData;
-
-    //printArray(arrData, sizeData);
-
     for(i = 0; i < numberOfThread; i++)
     {
         //mutex pour la valeur commune de gauche et droite
@@ -105,7 +105,22 @@ int main()
         pthread_join(arrThreads[i], NULL);
     }
 
-    //printArray(arrData, sizeData);
+    clock_t clockEnd = clock();
+    double timeMultiThread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
+
+    printf("\ntemps ecoule en multithread : %f seconds", timeMultiThread);
+
+    fillRandom(arrData, sizeData);
+
+    clockStart = clock();
+
+    bubbleSort(arrData, sizeData);
+
+    clockEnd = clock();
+
+    double timeMonothread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
+
+    printf("\ntemps ecoule en monothread : %f seconds", timeMonothread);
 
     //free memory
     free(arrData);
@@ -141,27 +156,6 @@ void fillRandom(int* array, int size)
     {
         array[i] = rand()%(size*3);
 	}
-}
-
-double getTime()
-{
-	static double start = 0;
-	struct timeval tv;
-	double now;
-
-	gettimeofday(&tv, 0);
-	now = tv.tv_sec + tv.tv_usec / 1e6L;
-
-	if (start)
-    {
-		now -= start;
-	}
-	else
-	{
-		start = now;
-		now = 0.L;
-	}
-	return now;
 }
 
 pthread_mutex_t modifyWorking = PTHREAD_MUTEX_INITIALIZER;
@@ -276,16 +270,15 @@ char checkIsLastWorking(char* arrWorking, int sizeArrayWorking)
 
 void bubbleSort(int* array, int size)
 {
-    int i;
+    int i, j, temp;
     //Bubble sorting algorithm
-    for(i = 0; i <= size; i++)
-    {
-        int j;
-        for(j=0; j < size-i; j++)
-        {
+    for(i=size-2; i>= 0; i--){
+        for(j=0; j<=i; j++){
+            //Swap
             if(array[j] > array[j+1])
             {
-                swapValue(array, j, j+1);
+                temp = array[j];
+                array[j] = array[j+1]; array[j+1]= temp;
             }
         }
     }

@@ -27,3 +27,17 @@
 	<pthread.h>
 	"section.h"
 
+1510687273 source:d:\prog_concurente\laboratoire\pc_l1_bubble\section.c
+	"section.h"
+
+1510687273 d:\prog_concurente\laboratoire\pc_l1_bubble\section.h
+	<pthread.h>
+	<stdbool.h>
+
+1510739389 source:d:\prog_concurente\laboratoire\pc_l1_bubble\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<pthread.h>
+	"section.h"
+
