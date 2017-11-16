@@ -10,14 +10,15 @@
 #include <pthread.h>
 #include "section.h"
 
-void swapValue(int* array, int a, int b);
-void fillRandom(int* array, int size);
+void copyArray(int* array, int size, int* arrayCopy);
 bool isArraySorted(int* array, int size);
 void printArray(int* array, int size);
 void printBoolArray(bool* array, int sizeArray);
-void bubbleSort(int* array, int size);
+void swapValue(int* array, int a, int b);
+void fillRandom(int* array, int size);
 void* multiThreadBubbleSort(void* param);
 bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking);
+void bubbleSort(int* array, int size);
 
 /**
 @brief  Fonction principale du programme
@@ -39,11 +40,17 @@ int main()
 
     printf("Taille du tableau : %d nombre de thread : %d\n", sizeData, numberOfThread);
 
-    //creation du tableau de données, malloc pour pouvoir faire un grand tableau (plus grand que demandé dans le labo)
+    // Créé lu tableau de données, malloc pour pouvoir faire un grand tableau (plus grand que demandé dans le labo)
     int* arrData = malloc(sizeof(int)*sizeData);
     fillRandom(arrData, sizeData);
+
+    // Copie du tableau afin de pouvoir tester les deux versions de tris
+    int* arrData2 = malloc(sizeof(int)*sizeData);
+    copyArray(arrData, sizeData, arrData2);
+
     int* subArray = arrData;
 
+    // Commence la mesure
     clock_t clockStart = clock();
 
     // Calcule la taille des sous-tableaux
@@ -131,11 +138,27 @@ int main()
 
     //free memory
     free(arrData);
+    free(arrData2);
     free(arrThreads);
     free(working);
     free(arrMutexes);
 
     return 0;
+}
+
+/**
+@brief  Permet de copier un tableau
+@param  array       Tableau devant être copié
+@param  size        Tableau devant être copié
+@param  arrayCopy   Copie de tableau
+*/
+void copyArray(int* array, int size, int* arrayCopy)
+{
+    int i;
+    for(i = 0;i < size; i++)
+    {
+        arrayCopy[i] = array[i];
+    }
 }
 
 /**
@@ -237,7 +260,7 @@ void* multiThreadBubbleSort(void* param)
 
         int j;
         for(j = 0; j < section->size; j++)
-        {
+        {void copyArray(int* array, int size, int* arrayCopy);
             //section cririque si c'est une valeure partagée -> locker les mutex dans ce cas
             if(j == 0 && section->leftMutex != NULL)
             {
