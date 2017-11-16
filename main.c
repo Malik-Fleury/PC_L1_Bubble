@@ -1,7 +1,7 @@
-/*
-    author : Bulloni Lucas & Fleury Malik
-    date : 03.11.2017
-    description : Laboratoire 1 - tri bulle concurrent
+/**
+    @author Bulloni Lucas & Fleury Malik
+    @date   03.11.2017
+    @brief  Laboratoire 1 - tri bulle concurrent
 */
 
 #include <stdio.h>
@@ -17,9 +17,14 @@ void bubbleSort(int* array, int size);
 void* multiThreadBubbleSort(void* param);
 bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking);
 
+/**
+@brief  Fonction principale du programme
+*/
 int main()
 {
     int sizeData, numberOfThread;
+
+    // Demande à l'utilisateur le nombre de données et de threads
     printf("Entrez la taille du tableau : ");
     scanf("%d", &sizeData);
 
@@ -38,12 +43,12 @@ int main()
 
     clock_t clockStart = clock();
 
-    //calculer la taille des sous-tableaux
+    // Calcule la taille des sous-tableaux
     int sizesArrays[numberOfThread];
     int sizeSubArray = (sizeData + numberOfThread - 1) / numberOfThread;
     int modSize = (sizeData+numberOfThread-1) % numberOfThread;
 
-    //initiation des tableaux
+    // Initialise les tableaux
     bool end = 0;
     pthread_mutex_t mutexEnd = PTHREAD_MUTEX_INITIALIZER;
     bool* working = malloc(sizeof(char)*numberOfThread);
@@ -59,6 +64,7 @@ int main()
         arrMutexes[i] = PTHREAD_MUTEX_INITIALIZER;
     }
 
+    // Initialisation du tableau de booléens indiquant les threads qui trient
     for(i = 0; i < numberOfThread; i++)
     {
         working[i] = true;
@@ -72,6 +78,7 @@ int main()
         }
     }
 
+    // Préparation des données pour chaque partie de tableau à trier et lancement des tries
     for(i = 0; i < numberOfThread; i++)
     {
         //mutex pour la valeur commune de gauche et droite
@@ -100,26 +107,23 @@ int main()
         subArray += sizesArrays[i] - 1;
     }
 
+    // Attend que tous les threads aient terminés leur travail
     for(i = 0; i < numberOfThread; i++)
     {
         pthread_join(arrThreads[i], NULL);
     }
 
+    // Affiche le temps écoulé pour le tri multi-threads
     clock_t clockEnd = clock();
     double timeMultiThread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
-
     printf("\ntemps ecoule en multithread : %f secondes", timeMultiThread);
 
+    // Lance le tri bubblesort monothread et affiche le résultat
     fillRandom(arrData, sizeData);
-
     clockStart = clock();
-
     bubbleSort(arrData, sizeData);
-
     clockEnd = clock();
-
     double timeMonothread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
-
     printf("\ntemps ecoule en monothread : %f secondes", timeMonothread);
 
     //free memory
@@ -131,6 +135,11 @@ int main()
     return 0;
 }
 
+/**
+@brief  Permet d'afficher les valeurs d'un tableau
+@param  array   Tableau à afficher
+@param  size    Taille du tableau
+*/
 void printArray(int* array, int sizeArray) {
     printf("\n");
 
@@ -139,8 +148,15 @@ void printArray(int* array, int sizeArray) {
     {
         printf("%d ", array[i]);
     }
+    printf("\n");
 }
 
+/**
+@brief  Permet d'échanger deux valeurs dans un tableau
+@param  array   Tableau dans lequel échangé deux valeurs
+@param  a       Index de la première valeurs à échanger
+@param  b       Index de la seconde valeurs à échanger
+*/
 void swapValue(int* array, int a, int b)
 {
 	int tmp = array[a];
@@ -148,6 +164,11 @@ void swapValue(int* array, int a, int b)
 	array[b] = tmp;
 }
 
+/**
+@brief  Permet de remplir le tableau avec des valeurs aléatoires
+@param  array   Tableau à remplir avec des valeurs aléatoires
+@param  size    Taille du tableau
+*/
 void fillRandom(int* array, int size)
 {
 	srand(time(0)*getpid());
@@ -160,6 +181,11 @@ void fillRandom(int* array, int size)
 
 pthread_mutex_t modifyWorking = PTHREAD_MUTEX_INITIALIZER;
 
+/**
+@brief  Effectue le tri bubblesort avec plusieurs threads
+@param  param   Structure "Section" contenant toutes les informations concernant
+                le tri d'une partie de tableau
+*/
 void* multiThreadBubbleSort(void* param)
 {
     Section* section = (Section*)param;
@@ -239,6 +265,11 @@ void* multiThreadBubbleSort(void* param)
 
 pthread_mutex_t checkWorking = PTHREAD_MUTEX_INITIALIZER;
 
+/**
+@brief  Vérifie si tous les threads travaillent encore
+@param  arrWorking          Tableau de booléens indiquant quels threads travaillent
+@param  sizeArrayWorking    Taille du tableau de booléens
+*/
 bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking)
 {
     bool isSomeoneWorking = false;
@@ -268,6 +299,11 @@ bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking)
     return isSomeoneWorking == false;
 }
 
+/**
+@brief  Alogorithme de tri bubblesort monothread
+@param  array   Tableau à trier
+@param  size    Taille du tableau à trier
+*/
 void bubbleSort(int* array, int size)
 {
     int i, j, temp;
