@@ -9,6 +9,7 @@
 //      - 2 mutex --> Toutes les sections qui se trouvent entre la première et la dernière
 //
 
+#include <stdio.h>
 #include "section.h"
 
 void initSection(Section* section, int tId, int* array, int size,

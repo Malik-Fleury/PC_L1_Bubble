@@ -128,13 +128,18 @@ int main()
     double timeMultiThread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
     printf("\ntemps ecoule en multithread : %f secondes\n", timeMultiThread);
 
+    //printArray(arrData, sizeData);
+    //printArray(arrData2, sizeData);
+
     // Lance le tri bubblesort monothread et affiche le résultat
-    fillRandom(arrData, sizeData);
     clockStart = clock();
-    bubbleSort(arrData, sizeData);
+    bubbleSort(arrData2, sizeData);
     clockEnd = clock();
     double timeMonothread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
     printf("\ntemps ecoule en monothread : %f secondes\n", timeMonothread);
+
+    //printArray(arrData, sizeData);
+    //printArray(arrData2, sizeData);
 
     //free memory
     free(arrData);
@@ -206,9 +211,9 @@ void printBoolArray(bool* array, int sizeArray)
     for(i = 0; i < sizeArray; i++)
     {
         if(array[i] == false)
-            printf("false ", array[i]);
+            printf("false ");
         else
-            printf("true ", array[i]);
+            printf("true ");
     }
     printf("\n");
 }
