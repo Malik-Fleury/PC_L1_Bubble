@@ -69,3 +69,18 @@
 1510853717 source:e:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\section.c
 	"section.h"
 
+1510864931 source:d:\prog_concurente\laboratoire\labo1_2\pc_l1_bubble\section.c
+	<stdio.h>
+	"section.h"
+
+1510856642 d:\prog_concurente\laboratoire\labo1_2\pc_l1_bubble\section.h
+	<pthread.h>
+	<stdbool.h>
+
+1510865641 source:d:\prog_concurente\laboratoire\labo1_2\pc_l1_bubble\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<pthread.h>
+	"section.h"
+

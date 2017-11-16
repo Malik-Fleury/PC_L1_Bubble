@@ -280,6 +280,23 @@ void* multiThreadBubbleSort(void* param)
             {
                 swapValue(section->array, j, j+1);
                 hasSwapped = 1;
+                if(j == 0)
+                {
+                    pthread_mutex_lock(&modifyWorking);
+                    if(section->tId > 0)
+                    {
+                        section->arrayWorking[section->tId - 1] = true;
+                    }
+                pthread_mutex_unlock(&modifyWorking);
+                }
+                else if(j == section->size - 2)
+                {
+                    if(section->tId < section->sizeArrayWorking - 1)
+                    {
+                        section->arrayWorking[section->tId + 1] = true;
+                    }
+                }
+
             }
 
             //unlock des mutex si c'est une valeur partagée
@@ -306,19 +323,7 @@ void* multiThreadBubbleSort(void* param)
                 *(section->end) = true;
                 pthread_mutex_unlock(section->mutexEnd);
             }
-            else
-            {
-                pthread_mutex_lock(&modifyWorking);
-                if(section->tId > 0)
-                {
-                    section->arrayWorking[section->tId - 1] = true;
-                }
-                if(section->tId < section->sizeArrayWorking - 1)
-                {
-                    section->arrayWorking[section->tId + 1] = true;
-                }
-                pthread_mutex_unlock(&modifyWorking);
-            }
+
             while(section->arrayWorking[section->tId] == false && section->end == false){}
         }
     }
