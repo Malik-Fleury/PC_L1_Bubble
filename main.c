@@ -12,6 +12,7 @@
 
 void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
+bool isArraySorted(int* array, int size);
 void printArray(int* array, int size);
 void printBoolArray(bool* array, int sizeArray);
 void bubbleSort(int* array, int size);
@@ -120,9 +121,6 @@ int main()
     double timeMultiThread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
     printf("\ntemps ecoule en multithread : %f secondes\n", timeMultiThread);
 
-    //printBoolArray(working, numberOfThread);
-    //printArray(arrData, sizeData);
-
     // Lance le tri bubblesort monothread et affiche le résultat
     fillRandom(arrData, sizeData);
     clockStart = clock();
@@ -138,6 +136,25 @@ int main()
     free(arrMutexes);
 
     return 0;
+}
+
+/**
+@brief  Permet de vérifier que le tableau soit bien trié
+@param  array   Tableau à vérifier
+@param  size    Taille du tableau
+*/
+bool isArraySorted(int* array, int size)
+{
+    bool sorted = true;
+
+    int i = 0;
+    while(sorted && i < size-1)
+    {
+        sorted = array[i] <= array[i+1];
+        i++;
+    }
+
+    return sorted;
 }
 
 /**
@@ -251,7 +268,7 @@ void* multiThreadBubbleSort(void* param)
         if(hasSwapped == 0)
         {
             pthread_mutex_lock(&modifyWorking);
-            section->arrayWorking[section->tId] = 0;
+            section->arrayWorking[section->tId] = false;
             pthread_mutex_unlock(&modifyWorking);
 
             //SI c'est le dernier qui travaille on s'arrête
@@ -305,16 +322,6 @@ bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking)
     }
     pthread_mutex_unlock(&checkWorking);
 
-    /*
-    if(isSomeoneWorking != 0)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
-    */
     return isSomeoneWorking == false;
 }
 
