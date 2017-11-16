@@ -108,7 +108,7 @@ int main()
         Section* data = malloc(sizeof(Section));
         initSection(data, i, subArray, sizesArrays[i], leftMutex, rightMutex, &end, &mutexEnd, working, numberOfThread);
 
-        printSection(data);
+        //printSection(data);
 
         if (pthread_create(&arrThreads[i], NULL, multiThreadBubbleSort, data) != 0)
         {
