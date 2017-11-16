@@ -108,6 +108,8 @@ int main()
         Section* data = malloc(sizeof(Section));
         initSection(data, i, subArray, sizesArrays[i], leftMutex, rightMutex, &end, &mutexEnd, working, numberOfThread);
 
+        printSection(data);
+
         if (pthread_create(&arrThreads[i], NULL, multiThreadBubbleSort, data) != 0)
         {
             exit(-1);
@@ -140,6 +142,18 @@ int main()
 
     //printArray(arrData, sizeData);
     //printArray(arrData2, sizeData);
+
+    printf("Vérification du tableau 1 : ");
+    if(isArraySorted(arrData, sizeData))
+        printf("OK\n");
+    else
+        printf("KO!\n");
+
+    printf("Vérification du tableau 2 : ");
+    if(isArraySorted(arrData2, sizeData))
+        printf("OK\n");
+    else
+        printf("KO!\n");
 
     //free memory
     free(arrData);
@@ -265,7 +279,7 @@ void* multiThreadBubbleSort(void* param)
 
         int j;
         for(j = 0; j < section->size; j++)
-        {void copyArray(int* array, int size, int* arrayCopy);
+        {
             //section cririque si c'est une valeure partagée -> locker les mutex dans ce cas
             if(j == 0 && section->leftMutex != NULL)
             {

@@ -36,8 +36,8 @@ void printSection(Section* section)
     printf("Taille du tableau : %d\n",section->size);
     printf("Adresse du mutex gauche : %p\n",section->leftMutex);
     printf("Adresse du mutex droit : %p\n",section->rightMutex);
-    printf("Adresse du flag de fin de tri : %p", section->end);
-    printf("Adresse du mutex de fin de tri : %p", section->mutexEnd);
-    printf("Adresse du tableau de flags de tri : %p", section->arrayWorking);
-    printf("Taille du tableau de flags : %d", section->sizeArrayWorking);
+    printf("Adresse du flag de fin de tri : %p\n", section->end);
+    printf("Adresse du mutex de fin de tri : %p\n", section->mutexEnd);
+    printf("Adresse du tableau de flags de tri : %p\n", section->arrayWorking);
+    printf("Taille du tableau de flags : %d\n", section->sizeArrayWorking);
 }
