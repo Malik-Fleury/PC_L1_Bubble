@@ -41,3 +41,31 @@
 	<pthread.h>
 	"section.h"
 
+1510742850 source:d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\section.c
+	"section.h"
+
+1510742850 d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\section.h
+	<pthread.h>
+	<stdbool.h>
+
+1510743769 source:d:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<pthread.h>
+	"section.h"
+
+1510854178 source:e:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<pthread.h>
+	"section.h"
+
+1510854141 e:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\section.h
+	<pthread.h>
+	<stdbool.h>
+
+1510853717 source:e:\ecole\hes_dlm\niveau_2\prog_concurrente\exercices_mf\pc_labo1_lastrel\section.c
+	"section.h"
+

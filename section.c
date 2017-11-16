@@ -13,8 +13,8 @@
 
 void initSection(Section* section, int tId, int* array, int size,
                  pthread_mutex_t* leftMutex, pthread_mutex_t* rightMutex,
-                 char* end, pthread_mutex_t* mutexEnd,
-                 char* arrayWorking, int sizeArrayWorking)
+                 bool* end, pthread_mutex_t* mutexEnd,
+                 bool* arrayWorking, int sizeArrayWorking)
 {
     section->tId = tId;
     section->array = array;
