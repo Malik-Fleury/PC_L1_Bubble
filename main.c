@@ -13,6 +13,7 @@
 void swapValue(int* array, int a, int b);
 void fillRandom(int* array, int size);
 void printArray(int* array, int size);
+void printBoolArray(bool* array, int sizeArray);
 void bubbleSort(int* array, int size);
 void* multiThreadBubbleSort(void* param);
 bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking);
@@ -22,7 +23,8 @@ bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking);
 */
 int main()
 {
-    int sizeData, numberOfThread;
+    int sizeData;
+    int numberOfThread;
 
     // Demande à l'utilisateur le nombre de données et de threads
     printf("Entrez la taille du tableau : ");
@@ -116,7 +118,10 @@ int main()
     // Affiche le temps écoulé pour le tri multi-threads
     clock_t clockEnd = clock();
     double timeMultiThread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
-    printf("\ntemps ecoule en multithread : %f secondes", timeMultiThread);
+    printf("\ntemps ecoule en multithread : %f secondes\n", timeMultiThread);
+
+    //printBoolArray(working, numberOfThread);
+    //printArray(arrData, sizeData);
 
     // Lance le tri bubblesort monothread et affiche le résultat
     fillRandom(arrData, sizeData);
@@ -124,7 +129,7 @@ int main()
     bubbleSort(arrData, sizeData);
     clockEnd = clock();
     double timeMonothread = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
-    printf("\ntemps ecoule en monothread : %f secondes", timeMonothread);
+    printf("\ntemps ecoule en monothread : %f secondes\n", timeMonothread);
 
     //free memory
     free(arrData);
@@ -140,13 +145,30 @@ int main()
 @param  array   Tableau à afficher
 @param  size    Taille du tableau
 */
-void printArray(int* array, int sizeArray) {
-    printf("\n");
-
+void printArray(int* array, int sizeArray)
+{
     int i;
     for(i = 0; i < sizeArray; i++)
     {
         printf("%d ", array[i]);
+    }
+    printf("\n");
+}
+
+/**
+@brief  Permet d'afficher les booléens d'un tableau
+@param  array   Tableau à afficher
+@param  size    Taille du tableau
+*/
+void printBoolArray(bool* array, int sizeArray)
+{
+    int i;
+    for(i = 0; i < sizeArray; i++)
+    {
+        if(array[i] == false)
+            printf("false ", array[i]);
+        else
+            printf("true ", array[i]);
     }
     printf("\n");
 }
@@ -228,7 +250,6 @@ void* multiThreadBubbleSort(void* param)
 
         if(hasSwapped == 0)
         {
-            // MUTEX - MF
             pthread_mutex_lock(&modifyWorking);
             section->arrayWorking[section->tId] = 0;
             pthread_mutex_unlock(&modifyWorking);
@@ -242,7 +263,6 @@ void* multiThreadBubbleSort(void* param)
             }
             else
             {
-                // MUTEX - MF
                 pthread_mutex_lock(&modifyWorking);
                 if(section->tId > 0)
                 {
@@ -275,7 +295,6 @@ bool checkIsLastWorking(bool* arrWorking, int sizeArrayWorking)
     bool isSomeoneWorking = false;
     int i;
 
-    // MUTEX - MF
     pthread_mutex_lock(&checkWorking);
     for(i = 0; i < sizeArrayWorking; i++)
     {
